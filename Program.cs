@@ -1,68 +1,139 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace COFFEE_MACHINE
 {
     internal class Program
     {
+        // Define coffee sizes and their prices using a dictionary
+        private static readonly Dictionary<int, (string Name, decimal Price)> CoffeeSizes = new Dictionary<int, (string, decimal)>
+        {
+            { 1, ("Small", 15.50m) },
+            { 2, ("Medium", 22.50m) },
+            { 3, ("Large", 35.50m) },
+            { 4, ("Extra-large", 43.50m) }
+        };
+
         static void Main(string[] args)
         {
-            
-            int TotalCoffeeCost = 0;
-            Console.WriteLine(" \nWELCOME TO TJITTERS COFFEE SHOP!!!!!!! \n");
-        Start:
-            Console.Write("PLEASE SELECT YOUR COFFEE SIZE - (1 - Small (R15.50), 2 -  Medium (R22.50), 3 - Large (R35.50), 4  - Extra-large (R43.50): \n");
-           int UserChoice = int.Parse(Console.ReadLine());
-            //double price = 0;
-            switch(UserChoice)
+            decimal totalAmount = 0;
+            DisplayWelcomeMessage();
+
+            bool orderingCoffee = true;
+            while (orderingCoffee)
             {
-                case 1:
-                    TotalCoffeeCost += 15;
-                break;
+                // Get coffee selection
+                int selectedSize = GetCoffeeSize();
+                if (selectedSize == 0) continue; // Invalid selection, try again
 
-                case 2:
-                    TotalCoffeeCost += 22;
-                    break ;
+                // Get quantity
+                int quantity = GetQuantity();
+                if (quantity == 0) continue; // Invalid quantity, try again
 
-                case 3:
-                    TotalCoffeeCost += 35;
-                    break;
+                // Calculate cost for this order
+                decimal coffeeCost = CalculateCost(selectedSize, quantity);
+                totalAmount += coffeeCost;
 
-                case 4:
-                    TotalCoffeeCost += 43;
-                    break;
+                // Display the current order summary
+                DisplayOrderSummary(selectedSize, quantity, coffeeCost, totalAmount);
 
-                default:
-                    Console.WriteLine("Invalid Choice", UserChoice);
-                break;
+                // Ask if user wants to continue ordering
+                orderingCoffee = AskToContinue();
             }
 
-            Console.WriteLine("How many coffee you would like to have?: ");
-            int qauntity = int.Parse(Console.ReadLine());
-            TotalCoffeeCost = TotalCoffeeCost * qauntity;
-                       
-            Console.WriteLine("Your Total bill amount = {0:F} ",TotalCoffeeCost);
-            //GetResponse();
-        Decide:
-            Console.WriteLine("Do you want to buy another coffee - Yes or No?");
-            String UserDecision = Console.ReadLine();
-            switch (UserDecision.ToUpper())
-            {
-                case "YES":
-                    goto Start;
-                case "NO":
-                    break;
+            // Display final amount and thank you message
+            DisplayFinalBill(totalAmount);
+        }
 
-                default:
-                    Console.WriteLine("Your choice {0} is invalid. Please try again...", UserDecision);
-                    goto Decide;
+        private static void DisplayWelcomeMessage()
+        {
+            Console.WriteLine("\n===================================");
+            Console.WriteLine("  WELCOME TO TJITTERS COFFEE SHOP  ");
+            Console.WriteLine("===================================\n");
+        }
+
+        private static int GetCoffeeSize()
+        {
+            Console.WriteLine("PLEASE SELECT YOUR COFFEE SIZE:");
+            foreach (var size in CoffeeSizes)
+            {
+                Console.WriteLine($"{size.Key} - {size.Value.Name} (R{size.Value.Price:F2})");
             }
+            Console.Write("\nEnter your choice (1-4): ");
+
+            if (int.TryParse(Console.ReadLine(), out int choice) && CoffeeSizes.ContainsKey(choice))
+            {
+                return choice;
+            }
+            else
+            {
+                Console.WriteLine("\nInvalid choice! Please select a number between 1-4.");
+                return 0;
+            }
+        }
+
+        private static int GetQuantity()
+        {
+            Console.Write("\nHow many coffees would you like to have? ");
+
+            if (int.TryParse(Console.ReadLine(), out int quantity) && quantity > 0)
+            {
+                return quantity;
+            }
+            else
+            {
+                Console.WriteLine("\nInvalid quantity! Please enter a positive number.");
+                return 0;
+            }
+        }
+
+        private static decimal CalculateCost(int sizeChoice, int quantity)
+        {
+            return CoffeeSizes[sizeChoice].Price * quantity;
+        }
+
+        private static void DisplayOrderSummary(int sizeChoice, int quantity, decimal coffeeCost, decimal totalAmount)
+        {
+            Console.WriteLine("\n--- ORDER SUMMARY ---");
+            Console.WriteLine($"{quantity} x {CoffeeSizes[sizeChoice].Name} Coffee @ R{CoffeeSizes[sizeChoice].Price:F2} each");
+            Console.WriteLine($"Cost for this selection: R{coffeeCost:F2}");
+            Console.WriteLine($"Running total: R{totalAmount:F2}");
+            Console.WriteLine("--------------------\n");
+        }
+
+        private static bool AskToContinue()
+        {
+            while (true)
+            {
+                Console.Write("Would you like to order another coffee? (yes/no): ");
+                string response = Console.ReadLine()?.Trim().ToUpper() ?? "NO";
+
+                if (response == "YES" || response == "Y")
+                {
+                    Console.WriteLine(); // Add a blank line for better readability
+                    return true;
+                }
+                else if (response == "NO" || response == "N")
+                {
+                    return false;
+                }
+                else
+                {
+                    Console.WriteLine($"Invalid response '{response}'. Please enter 'yes' or 'no'.");
+                }
+            }
+        }
+
+        private static void DisplayFinalBill(decimal totalAmount)
+        {
+            Console.WriteLine("\n=========================");
+            Console.WriteLine("       FINAL BILL        ");
+            Console.WriteLine("=========================");
+            Console.WriteLine($"Total amount: R{totalAmount:F2}");
+            Console.WriteLine("=========================");
+            Console.WriteLine("\nThank you for visiting Tjitters Coffee Shop!");
+            Console.WriteLine("Press any key to exit...");
             Console.ReadKey();
         }
-        
     }
 }
