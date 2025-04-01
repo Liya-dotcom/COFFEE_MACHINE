@@ -48,7 +48,7 @@ It's not fancy, but it works - kind of like the microwave ramen + energy drink d
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/yourusername/tjitters-coffee-machine.git
+   git clone https://github.com/Liya-dotcom/COFFEE_MACHINE.git
    ```
 
 2. **Run the application**:
