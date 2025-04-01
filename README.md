@@ -108,12 +108,4 @@ MIT License - Open source and free to modify/use
 
 ---
 
-Would you like me to add any of the following to the README?
-- Screenshot of the application in action
-- Detailed installation instructions
-- Contribution guidelines
-- Badges (build status, version, etc.)
-- Code quality metrics
-
-
-     
+   
